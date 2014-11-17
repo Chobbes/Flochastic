@@ -24,8 +24,8 @@
 import Flochastic.Card
 import Flochastic.Parser
 
+import Data.Attoparsec.Text
 import System.Environment
-
 
 main :: IO ()
 main = do [latexFile] <- getArgs
