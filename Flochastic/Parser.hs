@@ -23,7 +23,7 @@
 
 {-# LANGUAGE OverloadedStrings #-}
 
-module Flochastic.Parser () where
+module Flochastic.Parser (parseCard) where
 
 import Flochastic.Card
 
