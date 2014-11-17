@@ -25,9 +25,10 @@ import Flochastic.Card
 import Flochastic.Parser
 
 import Data.Attoparsec.Text
+import Data.Text.IO as T
 import System.Environment
 
 main :: IO ()
 main = do [latexFile] <- getArgs
-          latex <- readFile latexFile
+          latex <- T.readFile latexFile
           print $ parseOnly parseCard latex
