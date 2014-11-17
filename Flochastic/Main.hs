@@ -21,9 +21,13 @@
    SOFTWARE.
 -}
 
-module Flochastic.Parser () where
-
 import Flochastic.Card
+import Flochastic.Parser
+
+import System.Environment
+
 
 main :: IO ()
-main = undefined
+main = do [latexFile] <- getArgs
+          latex <- readFile latexFile
+          print $ parseOnly parseCard latex
