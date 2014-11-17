@@ -27,3 +27,4 @@ module Flochastic.Card (Card (..)) where
 data Card = Card { text :: String
                  , solution :: Maybe String
                  }
+                 deriving (Show)
