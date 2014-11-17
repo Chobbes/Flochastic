@@ -21,6 +21,7 @@
    SOFTWARE.
 -}
 
+module Flochastic.Card (Card (..)) where
 
 -- | A flash card has a base text, and also maybe has a solution.
 data Card = { text :: String
