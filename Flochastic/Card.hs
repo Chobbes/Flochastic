@@ -24,7 +24,8 @@
 module Flochastic.Card (Card (..)) where
 
 -- | A flash card has a base text, and also maybe has a solution.
-data Card = Card { text :: String
-                 , solution :: Maybe String
+data Card = Card { startText :: String  -- ^ Main text at the start of the card.
+                 , solution :: Maybe String  -- ^ Text which occurs within the solution.
+                 , endText :: String  -- ^ Text which may occur after the solution.
                  }
                  deriving (Show)
