@@ -25,10 +25,31 @@ import Flochastic.Card
 import Flochastic.Parser
 
 import Data.Attoparsec.Text
-import Data.Text.IO as T
+import Data.List
+import qualified Data.Text.IO as T
 import System.Environment
+import Text.LaTeX.Base.Parser
+import Text.LaTeX.Base.Render
+import Text.LaTeX.Base.Syntax
+
 
 main :: IO ()
 main = do [latexFile] <- getArgs
-          latex <- T.readFile latexFile
-          print $ parseOnly parseCard latex
+          latex <- parseLaTeXFile latexFile
+          putStrLn . intercalate "\n" . map show . getCards $ takeRight latex
+  where takeRight (Right a) = a
+
+
+-- | Get relevant cards from a block of LaTeX. Returns list of (minimalCard, fullCard) pairs.
+getCards :: LaTeX -> [(LaTeX, LaTeX)]
+getCards tex = map ((\l -> (removeEnv "proof" l, l)) . toLaTeX) (matchEnv (`elem` environments) tex)
+  where environments = ["mdef", "prop", "lemma", "theorem"]
+        toLaTeX (env, args, content) = TeXEnv env args content
+
+
+-- | Remove an environment out of a block of LaTeX.
+removeEnv :: String -> LaTeX -> LaTeX
+removeEnv env = texmap isEnv (\c -> TeXEmpty)
+  where isEnv e = case e of
+                    (TeXEnv texEnv _ _) -> texEnv == env
+                    _ -> False
