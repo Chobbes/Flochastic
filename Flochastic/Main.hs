@@ -32,6 +32,8 @@ import Text.LaTeX.Base.Render
 import Text.LaTeX.Base.Syntax
 
 
+
+-- | LaTeX flash cards generated from notes!
 main :: IO ()
 main = do [latexFile, outputDir] <- getArgs
           latex <- parseLaTeXFile latexFile
