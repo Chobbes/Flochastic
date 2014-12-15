@@ -21,22 +21,21 @@
    SOFTWARE.
 -}
 
-import Flochastic.Card
-import Flochastic.Parser
-
 import Data.Attoparsec.Text
 import Data.List
 import qualified Data.Text.IO as T
+import System.Directory
 import System.Environment
+import System.FilePath
 import Text.LaTeX.Base.Parser
 import Text.LaTeX.Base.Render
 import Text.LaTeX.Base.Syntax
 
 
 main :: IO ()
-main = do [latexFile] <- getArgs
+main = do [latexFile, outputDir] <- getArgs
           latex <- parseLaTeXFile latexFile
-          putStrLn . intercalate "\n" . map show . getCards $ takeRight latex
+          renderCards outputDir latexFile . getCards $ takeRight latex
   where takeRight (Right a) = a
 
 
@@ -53,3 +52,21 @@ removeEnv env = texmap isEnv (\c -> TeXEmpty)
   where isEnv e = case e of
                     (TeXEnv texEnv _ _) -> texEnv == env
                     _ -> False
+
+
+-- | Render LaTeX cards.
+renderCards :: FilePath -> FilePath -> [(LaTeX, LaTeX)] -> IO ()
+renderCards outDir baseFile cards =
+  mapM_ (uncurry renderCard) (zip qaFiles cards)
+  where qaFiles = zip questionFiles answerFiles
+        questionFiles = map (\n -> joinPath [outDir, (flip addExtension "tex" $ dropExtension baseFile ++ "-" ++ show n)]) [1 .. length cards]
+        answerFiles = map (\n -> joinPath [outDir, (flip addExtension "tex" $ dropExtension baseFile ++ "-" ++ show n ++ "-solution")]) [1 .. length cards]
+
+
+-- | Render LaTeX (question, solution) pair.
+renderCard :: (FilePath, FilePath) -> (LaTeX, LaTeX) -> IO ()
+renderCard (questionFile, answerFile) (question, answer) = 
+  do createDirectoryIfMissing True (dropFileName questionFile)
+     createDirectoryIfMissing True (dropFileName answerFile)
+     renderFile questionFile question
+     renderFile answerFile answer
