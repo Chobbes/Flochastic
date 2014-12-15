@@ -87,4 +87,4 @@ wrapCard preamble card = newPreamble <> TeXEnv "document" [] card
   where newPreamble = texmap isDocumentClass (const $ TeXComm "documentclass" args) preamble
         isDocumentClass (TeXComm "documentclass" _) = True
         isDocumentClass _ = False
-        args = [MOptArg (map TeXRaw ["varwidth=true", "border=10pt", "convert={size=640x}"]), FixArg (TeXRaw "standalone")]
+        args = [MOptArg (map TeXRaw ["varwidth=true", "border=10pt"]), FixArg (TeXRaw "standalone")]
