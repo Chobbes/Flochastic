@@ -21,6 +21,7 @@
    SOFTWARE.
 -}
 
+import Control.Monad
 import Data.Attoparsec.Text
 import Data.List
 import qualified Data.Text.IO as T
@@ -36,8 +37,11 @@ import Text.LaTeX.Base.Syntax
 -- | LaTeX flash cards generated from notes!
 main :: IO ()
 main = do [latexFile, outputDir] <- getArgs
-          latex <- parseLaTeXFile latexFile
-          renderCards outputDir latexFile . getCards $ takeRight latex
+                                    
+          latex <- liftM takeRight $ parseLaTeXFile latexFile
+          let preamble = getPreamble latex
+
+          renderCards outputDir latexFile $ map (\(q, a) -> (wrapCard preamble q, wrapCard preamble a)) (getCards latex)
   where takeRight (Right a) = a
 
 
@@ -72,3 +76,8 @@ renderCard (questionFile, answerFile) (question, answer) =
      createDirectoryIfMissing True (dropFileName answerFile)
      renderFile questionFile question
      renderFile answerFile answer
+
+
+-- | Wrap a card with a preamble.
+wrapCard :: LaTeX -> LaTeX -> LaTeX
+wrapCard preamble card = preamble <> (TeXEnv "document" [] card)
