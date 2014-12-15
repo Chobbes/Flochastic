@@ -21,6 +21,7 @@
    SOFTWARE.
 -}
 
+import Control.Arrow
 import Control.Monad
 import Data.Attoparsec.Text
 import Data.List
@@ -41,7 +42,7 @@ main = do [latexFile, outputDir] <- getArgs
           latex <- liftM takeRight $ parseLaTeXFile latexFile
           let preamble = getPreamble latex
 
-          renderCards outputDir latexFile $ map (\(q, a) -> (wrapCard preamble q, wrapCard preamble a)) (getCards latex)
+          renderCards outputDir latexFile $ map (wrapCard preamble *** wrapCard preamble) (getCards latex)
   where takeRight (Right a) = a
 
 
@@ -54,7 +55,7 @@ getCards tex = map ((\l -> (removeEnv "proof" l, l)) . toLaTeX) (matchEnv (`elem
 
 -- | Remove an environment out of a block of LaTeX.
 removeEnv :: String -> LaTeX -> LaTeX
-removeEnv env = texmap isEnv (\c -> TeXEmpty)
+removeEnv env = texmap isEnv (const TeXEmpty)
   where isEnv e = case e of
                     (TeXEnv texEnv _ _) -> texEnv == env
                     _ -> False
@@ -65,8 +66,8 @@ renderCards :: FilePath -> FilePath -> [(LaTeX, LaTeX)] -> IO ()
 renderCards outDir baseFile cards =
   mapM_ (uncurry renderCard) (zip qaFiles cards)
   where qaFiles = zip questionFiles answerFiles
-        questionFiles = map (\n -> joinPath [outDir, (flip addExtension "tex" $ dropExtension baseFile ++ "-" ++ show n)]) [1 .. length cards]
-        answerFiles = map (\n -> joinPath [outDir, (flip addExtension "tex" $ dropExtension baseFile ++ "-" ++ show n ++ "-solution")]) [1 .. length cards]
+        questionFiles = map (\n -> joinPath [outDir, flip addExtension "tex" $ dropExtension baseFile ++ "-" ++ show n]) [1 .. length cards]
+        answerFiles = map (\n -> joinPath [outDir, flip addExtension "tex" $ dropExtension baseFile ++ "-" ++ show n ++ "-solution"]) [1 .. length cards]
 
 
 -- | Render LaTeX (question, solution) pair.
@@ -80,4 +81,4 @@ renderCard (questionFile, answerFile) (question, answer) =
 
 -- | Wrap a card with a preamble.
 wrapCard :: LaTeX -> LaTeX -> LaTeX
-wrapCard preamble card = preamble <> (TeXEnv "document" [] card)
+wrapCard preamble card = preamble <> TeXEnv "document" [] card
