@@ -21,6 +21,8 @@
    SOFTWARE.
 -}
 
+{-# LANGUAGE OverloadedStrings #-}
+
 import Control.Arrow
 import Control.Monad
 import Data.Attoparsec.Text
@@ -81,4 +83,8 @@ renderCard (questionFile, answerFile) (question, answer) =
 
 -- | Wrap a card with a preamble.
 wrapCard :: LaTeX -> LaTeX -> LaTeX
-wrapCard preamble card = preamble <> TeXEnv "document" [] card
+wrapCard preamble card = newPreamble <> TeXEnv "document" [] card
+  where newPreamble = texmap isDocumentClass (const $ TeXComm "documentclass" args) preamble
+        isDocumentClass (TeXComm "documentclass" _) = True
+        isDocumentClass _ = False
+        args = [MOptArg (map TeXRaw ["varwidth=true", "border=10pt", "convert={size=640x}"]), FixArg (TeXRaw "standalone")]
