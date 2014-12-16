@@ -1,0 +1,283 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2ex}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{prop}{Proposition}
+\newtheorem{mdef}{Definition}
+
+\newcommand{\normal}{\trianglelefteq}
+\DeclareMathOperator{\im}{im}
+\DeclareMathOperator{\aut}{Aut}
+
+\author{
+  Beck, Calvin\\
+}
+
+\title{Group Theory}
+
+\begin{document}
+\maketitle
+
+\part*{2014-09-04:}
+
+\begin{mdef}[Group]
+A group $G$ is a set together with a binary operation $\cdot : G \times G \to G$. These must abide by the group axioms:
+
+\begin{enumerate}
+\item \textbf{Associativity:} $(a \cdot b) \cdot c = a \cdot (b \cdot c), \qquad \forall a,b \in G$
+\item \textbf{Identity:} $\exists e \in G$ such that $e \cdot a = a \cdot e = a, \qquad \forall a \in G$
+\item \textbf{Inverses:} $\forall a \in G, \exists b \in G$ such that $a \cdot b = b \cdot a = e$. We say that $b = a^{-1}$
+\end{enumerate}
+\end{mdef}
+
+\begin{mdef}[Subgroup]
+Let $G$ be a group. A subset $H \subseteq G$ is a subgroup if $H$ is also a group. It sufficies to show that:
+
+\begin{enumerate}
+\item $e \in H$
+\item $H$ is closed under the group operation
+\item If $h \in H$, then $h^{-1} \in H$
+\end{enumerate}
+
+If $H$ is a subgroup of $G$ we write $H \leq G$.
+\end{mdef}
+
+\begin{lemma}
+  Assume $G$ is a finite group, and that $H \leq G$ such that $2 \cdot |H| = |G|$, then $H \normal G$.
+
+  \begin{proof}
+    $H \normal G \implies aHa^{-1} = H, \quad \forall a \in G$
+
+    Clearly $a \in H \implies aHa^{-1} = H$, thus we shall focus on the case where $a \not \in H$.
+
+    If $a \not \in H$ then $aH \cap H = \emptyset$, since if $ah_1 = h_2$ for some $h_1, h_2 \in H$ then $a = h_2 h_1^{-1} \in H$, which contradicts our assumption that $a \not \in H$. This also means $|aH| = |H|$, and thus $G = aH \sqcup H$, since $|G| = 2 \cdot |H| = |aH \sqcup H|$.
+
+    Clearly $Ha \cap H = \emptyset$ by the same argument, which implies that $Ha = aH$. Thus $H \normal G$.
+  \end{proof}
+\end{lemma}
+
+\begin{mdef}[Homomorphism]
+  A homomorphism is a map between groups $\varphi : G \to H$ such that
+
+  \begin{enumerate}
+  \item $\varphi(e_G) = e_H$
+  \item $\varphi(g_1 g_2) = \varphi(g_1) \varphi(g_2)$
+  \end{enumerate}
+\end{mdef}
+
+\begin{mdef}[Kernel]
+  For a homomomorphism $\varphi : G \to H$, we define the kernel
+
+  \[\ker \varphi = \{g \in G : \varphi(g) = e_H\}\]
+\end{mdef}
+
+\begin{mdef}[Image]
+  The image of a homomorphism $\varphi : G \to H$ is given by
+
+  \[\im \varphi = \{h \in H : \exists g \in G, \varphi(g) = h\} = \varphi(G)\]
+\end{mdef}
+
+\begin{lemma}
+  The kernel of $\varphi : G \to H$ is normal in $G$.
+
+  \begin{proof}
+    Let $N = \ker \varphi$, and $n \in N$. For any $g \in G$
+
+    \begin{align*}
+      \varphi(gng^{-1}) &= \varphi(g) \varphi(n) \varphi(g^{-1})\\
+      &= \varphi(g) \varphi(g^{-1})\\
+      &= \varphi(g g^{-1})\\
+      &= e_H
+    \end{align*}
+
+    Thus $N \normal G$.
+  \end{proof}
+\end{lemma}
+
+\begin{lemma}
+  $I = \im \varphi$ is a group.
+
+  \begin{proof}
+    Must show that $I$ contains an identity, inverses, and is closed under the group operation.
+
+    \begin{enumerate}
+    \item Homomorphisms preserve identity.
+    \item $i \in I$, then $i = \varphi(g)$ for some $g \in
+      G$. $\varphi(g^{-1}) \varphi(g) = e_I \implies \varphi(g^{-1}) =
+      i^{-1} \in I$.
+    \item $i_1, i_2 \in I$, and $i_1 = \varphi(g_1)$, $i_2 =
+      \varphi(g_2)$ for some $g_1, g_2 \in G$.
+
+    \begin{align*}
+      i_1 i_2 &= \varphi(g_1) \varphi(g_2)\\
+      &= \varphi(g_1 g_2) \in I
+    \end{align*}
+    \end{enumerate}
+
+   Thus $\im \varphi$ is a group.
+  \end{proof}
+\end{lemma}
+
+\part*{2014-09-09}
+
+\begin{lemma}
+  If $H, K \leq G$, then $H \cap K \leq K$
+
+  \begin{proof}
+    Let $I = H \cap K$.
+
+    \begin{enumerate}
+    \item $e \in I$ since both $H$ and $K$ must have the identity in order to be groups.
+    \item $\forall i \in I$, $i^{-1} \in I$ since
+
+      \begin{align*}
+        i \in H &\implies i^{-1} \in H\\
+        i \in K &\implies i^{-1} \in K
+      \end{align*}
+
+      Thus, $i^{-1} \in I$.
+
+    \item $\forall i_1, i_2 \in I$,
+
+      \[i_1, i_2 \in H \implies i_1 i_2 \in H\]
+
+      and similarly
+
+      \[i_1, i_2 \in K \implies i_1 i_2 \in K\]
+
+      Thus, $H \cap K$ is closed under the group operation.
+    \end{enumerate}
+  \end{proof}
+\end{lemma}
+
+\begin{mdef}
+  Let $H, K \leq G$
+
+  \[H \cdot K = \{h \cdot k : h \in H, k \in K\}\]
+\end{mdef}
+
+\begin{lemma}
+  Let $H, K \leq G$.
+
+  \[HK \leq G \iff HK = KH\]
+
+  \begin{proof}
+    Suppose first that $HK \leq G$. That is
+
+    \[HK = \{hk : h \in H, k \in K\}\]
+
+    is a subgroup of $G$. We want to show that $\forall hk \in HK$, $\exists k'h' \in KH$ such that $hk = k'h'$. Since $HK$ is a group $(hk)^{-1} = k^{-1} h^{-1} \in HK$, thus let $(hk)^{-1} = {h'}^{-1} {k'}^{-1}$. It is then clear that $hk = k'h' \in KH$, and thus $HK = KH$.
+
+    Now suppose that $HK = KH$.
+
+    \begin{enumerate}
+    \item $HK$ must contain the identity element since both $H$ and $K$ are groups.
+    \item $hk \in HK, k^{-1} h^{-1} \in KH$, $HK = KH \implies k^{-1} h^{-1} \in HK$.
+    \item $h_1 k_1, h_2 k_2 \in HK$, then
+
+      \[h_1 k_1 h_2 k_2 = h_1 h_2' k_1' k_2\]
+
+      for some $h_2' \in H, k_1' \in K$, where $h_2' k_1' = k_1 h_2$.
+    \end{enumerate}
+  \end{proof}
+\end{lemma}
+
+\begin{mdef}[Normalizer]
+  Let $K \leq G$. The normalizer of $K$ in $G$
+
+  \[N_G(K) = \{g \in G : gKg^{-1} = K\}\]
+\end{mdef}
+
+\begin{lemma}
+  Given $K \leq G$, $N_G(K)$ is a group.
+
+  \begin{proof}
+    Recall $N_G(K) = \{g \in G : gKg^{-1} = K\}$.
+
+    \begin{enumerate}
+    \item Clearly $N_G(K)$ contains the identity.
+    \item $g \in N_G(K)$. $gKg^{-1} = K \implies g^{-1} K g = K$, thus $g^{-1} \in N_G(K)$.
+    \item $a, b \in N_G(K)$. $abK(ab)^{-1} = abKb^{-1}a^{-1} = aKa^{-1} = K$.
+    \end{enumerate}
+  \end{proof}
+\end{lemma}
+
+\begin{lemma}
+  If $H \subseteq N_G(K)$, then $HK \leq G$.
+
+  \begin{proof}
+    $\forall h \in H$, $hK = Kh \implies HK = KH$.
+  \end{proof}
+\end{lemma}
+
+\begin{mdef}[External Direct Product]
+  Let $H, K$ be two groups. The direct product of $H$ and $K$ is
+
+  \[H \times K = \{(h, k) : h \in H, k \in K\}\]
+
+  Where multiplication is defined componentwise
+
+  \[(h_1, k_1) \cdot (h_2, k_2) = (h_1 h_2, k_1 k_2)\]
+
+  We also note that
+
+  \begin{align*}
+    H &\cong \{(h, 1) : h \in H\}\\
+    K &\cong \{(1, k) : k \in K\}\\
+  \end{align*}
+\end{mdef}
+
+\begin{mdef}[Internal Direct Product]
+  Given a group $G$ and $H, K \leq G$ when is $G = H \times K$?
+
+  \begin{enumerate}
+    \item $H \cap K = 1$
+    \item $HK = G$
+    \item $H, K \normal G$
+  \end{enumerate}
+
+  \begin{proof}
+    We want an isomorphism $\varphi : H \times K \to G$, $(h, k) \mapsto (h \cdot k)$.
+
+    First we need this to be a homomorphism.
+
+    \begin{enumerate}
+    \item $\varphi(1, 1) = 1 \cdot 1 = 1$
+    \item $(h_1, k_1), (h_2, k_2) \in H \times K$
+
+      \[\varphi((h_1, k_1)(h_2, k_2)) = \varphi(h_1 h_2, k_1 k_2) = h_1 h_2 k_1 k_2\]
+
+      and similarly
+
+      \[\varphi((h_1, k_1)(h_2, k_2)) = \varphi(h_1, k_1) \varphi(h_2, k_2) = h_1 k_1 h_2 k_2\]
+
+      This means $h_2 k_1 = k_1 h_2$, and since these are arbitrary these groups must commute with each other (and since $HK = G$ these are normal in $G$).
+    \end{enumerate}
+
+    If this is surjective  $\im \varphi = G$. This can only happen if $HK = G$.
+
+    Finally, we need $\ker \varphi = \{1\}$ in order to show that the map is injective. If this were not the case then $\varphi(h, k) = h k = 1$ for some $h \in H$ and $k \in K$. However, this would mean that $h = k^{-1}$ and it is therefore the case that $h, k \in H \cap K$.
+
+    Thus, if $\varphi$ is injective then $H \cap K = 1$.
+  \end{proof}
+\end{mdef}
+
+\begin{mdef}[Automorphism Groups]
+  An automorphism is a homomorphism $\varphi : G \to G$. The automorphism group of a group $G$ is defined as:
+
+  \[\aut(G) = \{\varphi : G \to G : \varphi \text{ is a homomorphism}\}\]
+\end{mdef}
+
+\begin{mdef}[Conjugation Automorphism]
+  \[C_g(h) = g h g^{-1}\]
+\end{mdef}
+
+
+\end{document}
